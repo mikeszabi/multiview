@@ -4,14 +4,22 @@ Spyder Editor
 
 This is a temporary script file.
 """
-
+import os
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
+import re
+
+base_dir=r'd:\Data\caronboard'
+run_id='20180619_135547'
+ext='.jpg'
+
+im_dir=os.path.join(base_dir,run_id)
+jpg_list = [os.path.join(im_dir,f) for f in os.listdir(im_dir) if re.match('roi14._.\.jpg', f)]
 
 
-img1 = cv2.imread(r'D:\Projects\multiview\Photos\roi119_2.jpg',0)  #queryimage # left image
-img2 = cv2.imread(r'D:\Projects\multiview\Photos\roi123_2.jpg',0) #trainimage # right image
+img1 = cv2.imread(jpg_list[0],0)  #queryimage # left image
+img2 = cv2.imread(jpg_list[1],0) #trainimage # right image
 
 height, width = img1.shape[:2]
 img1 = cv2.resize(img1,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
