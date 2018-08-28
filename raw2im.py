@@ -12,6 +12,7 @@ import numpy as np
 import cv2
 import datetime
 
+
 def buffer_from_file(buffer_file):
     buffer=None
     with open(buffer_file, "rb") as binary_file:
@@ -34,13 +35,14 @@ def im_from_buffer(buffer):
       im_flipped=None  
     return im_flipped
 
-
-base_dir=r'd:\Data\caronboard'
-run_id='20180619_135547'
+base_dir=r'e:\IT Quality Services Kereskedelmi és Szolgáltató Kft\Kutatás-Fejlesztés - Dokumentumok\OneDrive - IT Quality Services Kereskedelmi és Szolgáltató Kft\EON\caronboardcalibration'
+run_id='20180808_153220'
 ext='.jpg'
 
 raw_dir=os.path.join(base_dir,run_id)
-raw_list = [os.path.join(raw_dir,f) for f in os.listdir(raw_dir) if re.match('roi14._.', f)]
+raw_list=glob.glob(raw_dir+'/roi*')
+
+script_path = os.getcwd()
 
 for buffer_file in raw_list:
   #buffer_file=raw_list[0]
@@ -48,11 +50,13 @@ for buffer_file in raw_list:
   if not os.path.isfile(os.path.splitext(buffer_file)[0]+ext):
     #print('generating jpg')
     png_file=buffer_file+'.jpg'
-
     if not os.path.exists(png_file):
       buffer=buffer_from_file(buffer_file)
       im_debayer=im_from_buffer(buffer)
       if im_debayer is not None:    
-        cv2.imwrite(png_file, im_debayer, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+        os.chdir(os.path.dirname(png_file))
+        cv2.imwrite(os.path.basename(png_file), im_debayer, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+        os.chdir(script_path)
+
       else:
         print('Buffer Problem')
