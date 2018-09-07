@@ -10,12 +10,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 import re
 
-base_dir=r'd:\DATA\EON\caronboardcalibration'
-run_id='20180808_153220'
+base_dir=r'd:\DATA\EON1\caronboardcalibration'
+run_id='20180808_153914'
 ext='.jpg'
 
 im_dir=os.path.join(base_dir,run_id)
-jpg_list = [os.path.join(im_dir,f) for f in os.listdir(im_dir) if re.match('roi17._.\.jpg', f)]
+jpg_list = [os.path.join(im_dir,f) for f in os.listdir(im_dir) if re.match('roi.*_.\.jpg', f)]
 
 
 img1 = cv2.imread(jpg_list[2],0)  #queryimage # left image

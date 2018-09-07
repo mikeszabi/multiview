@@ -20,7 +20,6 @@ I2  = imread(im_2);
 %The disparity range depends on the distance between the two cameras and the distance between the cameras and the object of interest. Increase the DisparityRange when the cameras are far apart or the objects are close to the cameras. To determine a reasonable disparity for your configuration, display the stereo anaglyph of the input images in imtool and use the Distance tool to measure distances between pairs of corresponding points. Modify the MaxDisparity to correspond to the measurement.
 figure;
 imtool(stereoAnaglyph(frameLeftRect, frameRightRect));
-title('Rectified Video Frames');
 
 %frameLeft_undistorted = undistortImage(I1,stereoParams.CameraParameters1);
 %frameRight_undistorted = undistortImage(I2,stereoParams.CameraParameters2);
@@ -31,9 +30,9 @@ frameRightGray = rgb2gray(frameRightRect);
 %frameLeftGray  = rgb2gray(frameLeft_undistorted);
 %frameRightGray = rgb2gray(frameRight_undistorted);
 
-disparityRange = [-560 560];
+disparityRange = [0 720];
 disparityMap = disparity(frameLeftGray,frameRightGray,'BlockSize',...
-    33,'DisparityRange',disparityRange);figure;
+    11,'DisparityRange',disparityRange);figure;
 imshow(disparityMap, disparityRange);
 title('Disparity Map');
 colormap jet
