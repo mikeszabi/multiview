@@ -20,12 +20,12 @@ im_dir=os.path.join(base_dir,run_id)
 jpg_list = [os.path.join(im_dir,f) for f in os.listdir(im_dir) if re.match('roi.*_.\.jpg', f)]
 
 
-img1 = cv2.imread(jpg_list[8],0)  #queryimage # left image
-img2 = cv2.imread(jpg_list[10],0) #trainimage # right image
+img1 = cv2.imread(jpg_list[5],0)  #queryimage # left image
+img2 = cv2.imread(jpg_list[6],0) #trainimage # right image
 
-height, width = img1.shape[:2]
-img1 = cv2.resize(img1,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
-img2 = cv2.resize(img2,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
+#height, width = img1.shape[:2]
+#img1 = cv2.resize(img1,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
+#img2 = cv2.resize(img2,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
 #img1.shape
 
 ## SIFT

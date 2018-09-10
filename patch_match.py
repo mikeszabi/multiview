@@ -9,6 +9,7 @@ import importlib
 import os
 import imtools_msz as imsz
 import matplotlib.pyplot as plt
+import cv2
 
 
 import homography_chain as hc
@@ -41,3 +42,20 @@ plt.figure(2)
 pos1 = tspv.DrawGraph(opGraph,'r') 
 plt.show()
 
+## visualize pairwise homography
+#i1=0
+#i2=1
+#im1=jpg_list[i1]
+#im2=jpg_list[i2]
+#
+#img1 = cv2.imread(im1,0)  #queryimage # left image
+#img2 = cv2.imread(im2,0)  #queryimage # left image
+#
+#M=hcobj.Ms[im1,im2]
+#
+#fig=plt.figure(4)
+#img1_2 = cv2.warpPerspective(img1, M, (img2.shape[1],img2.shape[0]))
+#f, axarr = fig.subplots(1, 3)
+#axarr[0].imshow(img1,cmap='gray')
+#axarr[1].imshow(img1_2,cmap='gray')
+#axarr[2].imshow(img2,cmap='gray')

@@ -46,7 +46,7 @@ class homography_chain:
     def __init__(self):
         # model specific parameters
      
-        self.orb = cv2.ORB_create(10000)
+        self.orb = cv2.ORB_create(1000)
         self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
 
         self.feats={}
