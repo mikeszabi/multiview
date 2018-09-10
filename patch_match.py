@@ -21,7 +21,8 @@ importlib.reload(tspv)
 
 
 base_dir=r'd:\DATA\EON1\photosFor3D'
-run_id='SceauxCastle\images'
+run_id='20180907_103336_sel1'
+#run_id='SceauxCastle\images'
 ext='.jpg'
 
 im_dir=os.path.join(base_dir,run_id)

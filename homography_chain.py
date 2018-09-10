@@ -75,7 +75,7 @@ class homography_chain:
 
 
         ## find homography matrix and do perspective transform
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,2.0)
         return M
 
     

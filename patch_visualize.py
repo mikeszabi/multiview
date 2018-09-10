@@ -18,8 +18,8 @@ refPt = []
 refPt_transformed = []
 cropping = False
 
-i1=5
-i2=6
+i1=1
+i2=8
 im1=jpg_list[i1]
 im2=jpg_list[i2]
 
@@ -28,9 +28,9 @@ M=hcobj.Ms[im1,im2]
 img1 = cv2.imread(im1,0)  #queryimage # left image
 img2 = cv2.imread(im2,0)  #queryimage # left image        
         
-
-image1, scale = imRescaleMaxDim(img1, 640, boUpscale = False, interpolation = 1)
-image2, scale = imRescaleMaxDim(img2, 640, boUpscale = False, interpolation = 1)
+#max_dim=max(img1.shape)
+image1, scale = imRescaleMaxDim(img1, max(img1.shape), boUpscale = False, interpolation = 1)
+image2, scale = imRescaleMaxDim(img2, max(img1.shape), boUpscale = False, interpolation = 1)
 
 M[0][2]*=scale
 M[1][2]*=scale
@@ -75,12 +75,12 @@ def click_and_crop(event, x, y, flags, param):
 # load the image, clone it, and setup the mouse callback function
         
 
-clone=np.concatenate((image1, image1_2), axis=1)
+clone=np.concatenate((image1, image2), axis=1)
 
 
-
-cv2.namedWindow("image")
-
+#cv2.namedWindow("image")
+cv2.namedWindow("image",cv2.WINDOW_NORMAL)
+cv2.resizeWindow('image',2048,2176)
 cv2.setMouseCallback("image", click_and_crop)
  
 # keep looping until the 'q' key is pressed

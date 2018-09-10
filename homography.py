@@ -70,7 +70,7 @@ dst_pts  = np.float32([kp2[m.trainIdx].pt for m in matches]).reshape(-1,1,2)
 
 
 ## find homography matrix and do perspective transform
-M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,1.0)
 np.linalg.det(M)
 
 h,w = img1.shape[:2]
@@ -81,13 +81,13 @@ dst = cv2.perspectiveTransform(pts,M)
 
 ## draw found regions
 
-#img2_poly = cv2.polylines(img2, [np.int32(dst)], True, (0,0,255), 10, cv2.LINE_AA)
-#plt.imshow(img2_poly)
+img2_poly = cv2.polylines(img2, [np.int32(dst)], True, (0,0,255), 10, cv2.LINE_AA)
+plt.imshow(img2_poly)
 
 plt.figure(3)
 
 ## draw match lines
-res = cv2.drawMatches(img1, kp1, img2, kp2, dmatches[:20],None,flags=2)
+res = cv2.drawMatches(img1, kp1, img2, kp2, dmatches[:100],None,flags=2)
 
 plt.imshow(res,cmap='gray')
 
