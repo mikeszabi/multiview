@@ -6,7 +6,7 @@ showExtrinsics(stereoParams);
 %%
 base_dir='d:\DATA\EON1\caronboardcalibration\';
 cur_id='20180808_150659_calib\';
-frame_num=1100;
+frame_num=1127;
 im_1=fullfile(base_dir,cur_id,['roi',num2str(frame_num),'_1.jpg']);
 im_2=fullfile(base_dir,cur_id,['roi',num2str(frame_num),'_2.jpg']);
 
@@ -30,7 +30,7 @@ frameRightGray = rgb2gray(frameRightRect);
 %frameLeftGray  = rgb2gray(frameLeft_undistorted);
 %frameRightGray = rgb2gray(frameRight_undistorted);
 
-disparityRange = [0 720];
+disparityRange = [0 64];
 disparityMap = disparity(frameLeftGray,frameRightGray,'BlockSize',...
     11,'DisparityRange',disparityRange);figure;
 imshow(disparityMap, disparityRange);
@@ -51,7 +51,9 @@ rect2=getrect(f2);
 point3d = triangulate(rect1(1:2), rect2(1:2), stereoParams);
 distanceInMeters = norm(point3d)/1000;
 
-
+figure;
+imshow(insertObjectAnnotation(frameRightRect, 'rectangle', rect2, [num2str(distanceInMeters),' meter'],'FontSize',72,'LineWidth',10));
+title('Detected Pylon');
 %%
 points3D = reconstructScene(disparityMap, stereoParams);
 

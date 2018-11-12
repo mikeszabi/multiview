@@ -16,13 +16,13 @@ from src_stereo_calib.stereo_calib import StereoCalibration
 
 #https://gist.github.com/aarmea/629e59ac7b640a60340145809b1c9013
 
-run_id='20180808_150659_calib'
+run_id='20180808_161610_calib'
 
 base_dir=r'd:\DATA\EON1\caronboardcalibration'
 #base_dir=r'C:\\Users\\fodrasz\\'
 im_dir=os.path.join(base_dir,run_id)
 
-calib_dir=os.path.join(base_dir,run_id,'end_calib')
+calib_dir=os.path.join(base_dir,run_id,'')
 
 cal_path_left           = os.path.join(calib_dir,'left')
 cal_path_right           = os.path.join(calib_dir,'right')
@@ -64,20 +64,25 @@ rightMapX, rightMapY = cv2.initUndistortRectifyMap(
 
 """
 """
-imgL = cv2.imread(os.path.join(im_dir,'roi1000_1.jpg'))
-imgR = cv2.imread(os.path.join(im_dir,'roi1000_2.jpg'))
+run_id='20180808_150659_calib'
+
+base_dir=r'd:\DATA\EON1\caronboardcalibration'
+#base_dir=r'C:\\Users\\fodrasz\\'
+im_dir=os.path.join(base_dir,run_id)
+imgL = cv2.imread(os.path.join(im_dir,'roi1127_1.jpg'))
+imgR = cv2.imread(os.path.join(im_dir,'roi1127_2.jpg'))
 
 
 fixedLeft = cv2.remap(imgL, leftMapX, leftMapY, cv2.INTER_LINEAR)
 fixedRight = cv2.remap(imgR, rightMapX, rightMapY, cv2.INTER_LINEAR)
 
 stereoMatcher = cv2.StereoBM_create()
-stereoMatcher.setMinDisparity(0)
-stereoMatcher.setNumDisparities(112)
-stereoMatcher.setBlockSize(31)
+stereoMatcher.setMinDisparity(16)
+stereoMatcher.setNumDisparities(32)
+stereoMatcher.setBlockSize(15)
 
-stereoMatcher.setSpeckleRange(64)
-stereoMatcher.setSpeckleWindowSize(100)
+stereoMatcher.setSpeckleRange(16)
+stereoMatcher.setSpeckleWindowSize(50)
 
 grayLeft = cv2.cvtColor(fixedLeft, cv2.COLOR_BGR2GRAY)
 grayRight = cv2.cvtColor(fixedRight, cv2.COLOR_BGR2GRAY)
@@ -86,23 +91,23 @@ depth = stereoMatcher.compute(grayLeft, grayRight)
 ##
 
 window_size = 5
-min_disp = 16
-num_disp = 112-min_disp
-stereo = cv2.StereoSGBM(
+min_disp = 0
+num_disp = 96-min_disp
+stereo = cv2.StereoSGBM_create(
     minDisparity = min_disp,
     numDisparities = num_disp,
-    SADWindowSize = window_size,
-    uniquenessRatio = 10,
-    speckleWindowSize = 50,
+    uniquenessRatio = 2,
+    speckleWindowSize = 100,
     speckleRange = 32,
     disp12MaxDiff = 1,
     P1 = 8*3*window_size**2,
     P2 = 32*3*window_size**2,
-    fullDP = False
 )
 
-disparity = stereo.compute(imgL, imgR).astype(np.float32) / 16.0
+disparity = stereo.compute(grayLeft, grayRight).astype(np.float32) / 16.0
 disparity = (disparity-min_disp)/num_disp
+
+## disparity without rectification
 
 grayLeft = cv2.cvtColor(imgL, cv2.COLOR_BGR2GRAY)
 grayRight = cv2.cvtColor(imgR, cv2.COLOR_BGR2GRAY)
@@ -111,6 +116,6 @@ depth = stereoMatcher.compute(grayLeft, grayRight)
 cv2.namedWindow('depth',cv2.WINDOW_NORMAL)
 cv2.resizeWindow('depth',272,512)    
 
-DEPTH_VISUALIZATION_SCALE = 4096
+DEPTH_VISUALIZATION_SCALE = 1024
 cv2.imshow('depth', depth / DEPTH_VISUALIZATION_SCALE)
 cv2.waitKey(500) 
