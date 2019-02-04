@@ -4,11 +4,11 @@
 %run stereo calibration app and export stereoParams
 showExtrinsics(stereoParams);
 %%
-base_dir='d:\DATA\EON1\caronboardcalibration\';
-cur_id='20180808_150659_calib\';
-frame_num=1127;
-im_1=fullfile(base_dir,cur_id,['roi',num2str(frame_num),'_1.jpg']);
-im_2=fullfile(base_dir,cur_id,['roi',num2str(frame_num),'_2.jpg']);
+base_dir='d:\DATA\MAV1\Images\';
+cur_id='Selection_1\';
+frame_num=12700;
+im_1=fullfile(base_dir,cur_id,['roi_0_',num2str(frame_num),'.jpg']);
+im_2=fullfile(base_dir,cur_id,['roi_1_',num2str(frame_num),'.jpg']);
 
 
 I1  = imread(im_1);
