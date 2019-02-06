@@ -19,7 +19,7 @@ refPt_transformed = []
 cropping = False
 
 i1=1
-i2=8
+i2=2
 im1=jpg_list[i1]
 im2=jpg_list[i2]
 
