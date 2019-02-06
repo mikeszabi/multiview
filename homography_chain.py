@@ -12,7 +12,8 @@ import numpy as np
 #import re
 #from collections import defaultdict
 import networkx as nx
-
+import imtools_msz as imsz
+from homography import init_feature
 #http://benalexkeen.com/implementing-djikstras-shortest-path-algorithm-with-python/
 # https://towardsdatascience.com/getting-started-with-graph-analysis-in-python-with-pandas-and-networkx-5e2d2f82f18e
 
@@ -35,6 +36,10 @@ import networkx as nx
 #        self.weights[(from_node, to_node)] = weight
 #        self.weights[(to_node, from_node)] = weight
 
+FLANN_INDEX_KDTREE = 1  # bug: flann enums are missing
+FLANN_INDEX_LSH    = 6
+
+
 def get_strength(M):
     M_strength=np.abs(1-np.linalg.det(M))
     if M_strength>1:
@@ -43,12 +48,14 @@ def get_strength(M):
     
     
 class homography_chain:
-    def __init__(self):
+    def __init__(self,feat='orb',ratio=1):
         # model specific parameters
      
-        self.orb = cv2.ORB_create(1000)
-        self.bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+        self.image_width=1416
+        
+        self.detector,self.matcher=init_feature(feat,n_feature_point=None)
 
+        self.ratio=ratio
         self.feats={}
         self.matches={}
 #        self.img_width=1000
@@ -67,15 +74,13 @@ class homography_chain:
 
     
     def create_homography(self, matches, im1, im2):
-        dmatches = sorted(matches, key = lambda x:x.distance)
 
         ## extract the matched keypoints
-        src_pts  = np.float32([self.feats[im1][0][m.queryIdx].pt for m in dmatches]).reshape(-1,1,2)
-        dst_pts  = np.float32([self.feats[im2][0][m.trainIdx].pt for m in dmatches]).reshape(-1,1,2)
-
+        src_pts  = np.float32([self.feats[im1][0][m.queryIdx].pt for m in matches]).reshape(-1,1,2)
+        dst_pts  = np.float32([self.feats[im2][0][m.trainIdx].pt for m in matches]).reshape(-1,1,2)
 
         ## find homography matrix and do perspective transform
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,2.0)
+        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
         return M
 
     
@@ -84,16 +89,11 @@ class homography_chain:
         for im in self.im_list:
             print(os.path.basename(im))
             img = cv2.imread(im,0)  #queryimage # left image
-            height, width = img.shape[:2]
+            img, scale=imsz.imRescaleMaxDim(img, self.image_width, boUpscale = False, interpolation = 1)
 
-            #img = cv2.resize(img,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
-
-            # ToDO:check if valid image
-            # Resize image
-#            height, width = img.shape[:2]
-#            img = cv2.resize(img,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
-#            
-            self.feats[im] = self.orb.detectAndCompute(img,None)
+            kp, des = self.detector.detectAndCompute(img,None)
+            #des=des.astype('float32')
+            self.feats[im]=(kp,des)
             
         return 
     
@@ -107,16 +107,32 @@ class homography_chain:
             im1=self.im_list[i1]
             for i2 in range(i1+1,self.n_im):
                 im2=self.im_list[i2]
-                matches = self.bf.match(self.feats[im1][1],self.feats[im2][1])
+                matches = self.matcher.knnMatch(self.feats[im1][1],self.feats[im2][1],k=2)
                 
-                self.Ms[im1,im2]=self.create_homography(matches, im1, im2)
+                # ratio test
+                good = []
+                for m in matches:
+                    if len(m)<2:
+                        print(m)
+                    else:
+                        if m[0].distance < self.ratio*m[1].distance:
+                            good.append(m[0])
                 
-                M_strength=get_strength(self.Ms[im1,im2])
+                ######
+                dmatches = sorted(good, key = lambda x:x.distance)
+
+                self.Ms[im1,im2]=self.create_homography(dmatches, im1, im2)
+                
+                if self.Ms[im1,im2] is not None:
+                    M_strength=get_strength(self.Ms[im1,im2])
+                else:
+                    M_strength=0
                 print('{} - {} : {}'.format(i1,i2, M_strength))
                 if M_strength<min_strength:
                     min_strength=M_strength
                     self.initial=i1
-                
+
                 self.match_graph.add_edge(i1,i2,length=float("{0:.3f}".format(M_strength)))
+            
        
         return

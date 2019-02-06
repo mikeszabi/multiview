@@ -19,16 +19,15 @@ import tsp_visualization as tspv
 importlib.reload(tspv)
 
 
-
-base_dir=r'd:\DATA\EON1\photosFor3D'
+base_dir=r'd:\Data\EON1\photosFor3D\SceauxCastle'
 #run_id='20180907_103336_sel1'
-run_id='SceauxCastle\images'
+run_id='images'
 ext='.jpg'
 
 im_dir=os.path.join(base_dir,run_id)
 jpg_list=imsz.imagelist_in_depth(im_dir,level=1)
 
-hcobj=hc.homography_chain()
+hcobj=hc.homography_chain(feat='surf',ratio=0.8)
 hcobj.add_image_list(jpg_list)
 
 hcobj.create_features()
@@ -36,10 +35,10 @@ hcobj.match_features()
 
 G=hcobj.match_graph
 
-plt.figure(1)
+plt.figure(10)
 pos = tspv.DrawGraph(G,'black')
 opGraph = tspv.christofedes(G, pos)
-plt.figure(2)
+plt.figure(11)
 pos1 = tspv.DrawGraph(opGraph,'r') 
 plt.show()
 
@@ -51,11 +50,16 @@ im2=jpg_list[i2]
 
 img1 = cv2.imread(im1,0)  #queryimage # left image
 img2 = cv2.imread(im2,0)  #queryimage # left image
+max_dim=hcobj.image_width
+img1, scale = imsz.imRescaleMaxDim(img1, max_dim, boUpscale = False, interpolation = 1)
+img2, scale = imsz.imRescaleMaxDim(img2, max_dim, boUpscale = False, interpolation = 1)
 
 M=hcobj.Ms[im1,im2]
 
-fig=plt.figure(4)
-img1_2 = cv2.warpPerspective(img1, M, (img2.shape[1]+img1.shape[1],img2.shape[0]))
+img1_2 = cv2.warpPerspective(img1, M, (img2.shape[1],img2.shape[0]))
+
+fig=plt.figure(12)
+
 axarr = fig.subplots(1, 3)
 axarr[0].imshow(img1,cmap='gray')
 axarr[1].imshow(img1_2,cmap='gray')

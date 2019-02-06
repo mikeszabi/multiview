@@ -18,13 +18,9 @@ refPt = []
 refPt_transformed = []
 cropping = False
 
-<<<<<<< HEAD
-i1=1
-i2=2
-=======
 i1=0
 i2=1
->>>>>>> aff766741dc5f9ee97f17252524d550af435fb67
+
 im1=jpg_list[i1]
 im2=jpg_list[i2]
 
@@ -32,22 +28,19 @@ M=hcobj.Ms[im1,im2]
 
 img1 = cv2.imread(im1,0)  #queryimage # left image
 img2 = cv2.imread(im2,0)  #queryimage # left image        
-        
-#max_dim=max(img1.shape)
-image1, scale = imRescaleMaxDim(img1, max(img1.shape), boUpscale = False, interpolation = 1)
-image2, scale = imRescaleMaxDim(img2, max(img1.shape), boUpscale = False, interpolation = 1)
 
-M[0][2]*=scale
-M[1][2]*=scale
-M[2][0]*=scale
-M[2][1]*=scale
+max_dim=hcobj.image_width
+img1, scale = imRescaleMaxDim(img1, max_dim, boUpscale = False, interpolation = 1)
+img2, scale = imRescaleMaxDim(img2, max_dim, boUpscale = False, interpolation = 1)
 
-w=image1.shape[1]
+img2 = cv2.warpPerspective(img1, M, (img2.shape[1],img2.shape[0]))
+
+# M[0][2]*=scale
+# M[1][2]*=scale
+# M[2][0]*=scale
+# M[2][1]*=scale
 
 
-image1_2 = cv2.warpPerspective(image1, M, (image2.shape[1],image2.shape[0]))
-
- 
 def click_and_crop(event, x, y, flags, param):
 	# grab references to the global variables
     global refPt, refPt_transformed, cropping, M, w
@@ -80,12 +73,12 @@ def click_and_crop(event, x, y, flags, param):
 # load the image, clone it, and setup the mouse callback function
         
 
-clone=np.concatenate((image1, image2), axis=1)
+clone=np.concatenate((img1, img2), axis=1)
 
 
 #cv2.namedWindow("image")
 cv2.namedWindow("image",cv2.WINDOW_NORMAL)
-cv2.resizeWindow('image',2048,2176)
+cv2.resizeWindow('image',(img1.shape[1],int(img1.shape[0]/2)))
 cv2.setMouseCallback("image", click_and_crop)
  
 # keep looping until the 'q' key is pressed
