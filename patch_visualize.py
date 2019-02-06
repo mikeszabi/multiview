@@ -18,8 +18,13 @@ refPt = []
 refPt_transformed = []
 cropping = False
 
+<<<<<<< HEAD
 i1=1
 i2=2
+=======
+i1=0
+i2=1
+>>>>>>> aff766741dc5f9ee97f17252524d550af435fb67
 im1=jpg_list[i1]
 im2=jpg_list[i2]
 

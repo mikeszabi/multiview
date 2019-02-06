@@ -9,24 +9,25 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 import re
+import glob
 
 base_dir=r'd:\DATA\EON1\caronboardcalibration'
 base_dir=r'd:\DATA\EON1\caronboardcalibration\3d_results\Cibakhaza'
 base_dir=r'd:\DATA\MAV1\Images'
 run_id='20180808_153914'
 run_id='art_20180823_121650_995'
-run_id='Selection_1'
+run_id='Selection_20190124_104616_12700_12900'
 ext='.jpg'
 
 im_dir=os.path.join(base_dir,run_id)
 jpg_list = [os.path.join(im_dir,f) for f in os.listdir(im_dir) if re.match('roi.*_.\.jpg', f)]
 
+jpg_list = glob.glob(os.path.join(im_dir,'*.jpg'))
 
 img1 = cv2.imread(jpg_list[5],0)  #queryimage # left image
-img2 = cv2.imread(jpg_list[6],0) #trainimage # right image
+img2 = cv2.imread(jpg_list[300],0) #trainimage # right image
+##
 
-img1 = cv2.imread(os.path.join(im_dir,'roi_0_12700.jpg'))
-img2 = cv2.imread(os.path.join(im_dir,'roi_1_12700.jpg'))
 
 #height, width = img1.shape[:2]
 #img1 = cv2.resize(img1,(int(0.5*width), int(0.5*height)), interpolation = cv2.INTER_CUBIC)
