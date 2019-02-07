@@ -8,8 +8,6 @@ import os
 import cv2
 import numpy as np
 from matplotlib import pyplot as plt
-import re
-import glob
 import imtools_msz as imsz
 
 FLANN_INDEX_KDTREE = 1  # bug: flann enums are missing
@@ -71,8 +69,8 @@ def drawlines(img1,img2,lines,pts1,pts2):
         img2 = cv2.circle(img2,tuple(pt2[0]),5,color,-1)
     return img1,img2
 
-det_type='sift'
-ratio=0.8
+det_type='orb'
+ratio=0.75
 
 
 #base_dir=r'd:\Data\EON1\photosFor3D\SceauxCastle'
@@ -100,14 +98,14 @@ img2 = cv2.imread(im_file2,0) #trainimage # right image
 
 
 ##
-max_dim=1416
+max_dim=2028
 img1, scale = imsz.imRescaleMaxDim(img1, max_dim, boUpscale = False, interpolation = 1)
 img2, scale = imsz.imRescaleMaxDim(img2, max_dim, boUpscale = False, interpolation = 1)
 
 ## SIFT
 # sift = cv2.xfeatures2d.SIFT_create(800)
 
-detector,matcher=init_feature(det_type,n_feature_point=None)
+detector,matcher=init_feature(det_type,n_feature_point=2000)
 
 kp1, des1 = detector.detectAndCompute(img1,None)
 kp2, des2 = detector.detectAndCompute(img2,None)
@@ -177,30 +175,30 @@ axarr[2].imshow(img2,cmap='gray')
 # drawing its lines on left image
 pts1 = np.int32(src_pts)
 pts2 = np.int32(dst_pts)
-F, mask = cv2.findFundamentalMat(pts1,pts2,cv2.FM_LMEDS) # FM_LMEDS
+F, mask = cv2.findFundamentalMat(pts1,pts2,cv2.FM_8POINT  ) # FM_LMEDS
 
 # We select only inlier points
 pts1 = pts1[mask.ravel()==1]
 pts2 = pts2[mask.ravel()==1]
 
 
-# Find epilines corresponding to points in left image (first image) and
-# drawing its lines on right image
-lines1 = cv2.computeCorrespondEpilines(pts2.reshape(-1,1,2), 2,F)
-lines1 = lines1.reshape(-1,3)
-img5,img6 = drawlines(img1,img2,lines1,pts1,pts2)
-
-# Find epilines corresponding to points in left image (first image) and
-# drawing its lines on right image
-lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1,1,2), 1,F)
-lines2 = lines2.reshape(-1,3)
-img3,img4 = drawlines(img2,img1,lines2,pts2,pts1)
-
-fig=plt.figure(3)
-axarr = fig.subplots(1, 2)
-axarr[0].imshow(img5,cmap='gray')
-axarr[1].imshow(img3,cmap='gray')
-plt.show()
+## Find epilines corresponding to points in left image (first image) and
+## drawing its lines on right image
+#lines1 = cv2.computeCorrespondEpilines(pts2.reshape(-1,1,2), 2,F)
+#lines1 = lines1.reshape(-1,3)
+#img5,img6 = drawlines(img1,img2,lines1,pts1,pts2)
+#
+## Find epilines corresponding to points in left image (first image) and
+## drawing its lines on right image
+#lines2 = cv2.computeCorrespondEpilines(pts1.reshape(-1,1,2), 1,F)
+#lines2 = lines2.reshape(-1,3)
+#img3,img4 = drawlines(img2,img1,lines2,pts2,pts1)
+#
+#fig=plt.figure(3)
+#axarr = fig.subplots(1, 2)
+#axarr[0].imshow(img5,cmap='gray')
+#axarr[1].imshow(img3,cmap='gray')
+#plt.show()
 
 # rectification
 pts1 = np.int32(pts1)
@@ -221,15 +219,17 @@ plt.show()
 
 #calculation of the disparity
 stereoMatcher = cv2.StereoBM_create()
-stereoMatcher.setMinDisparity(16)
-stereoMatcher.setNumDisparities(64)
-stereoMatcher.setBlockSize(15)
+stereoMatcher.setMinDisparity(0)
+stereoMatcher.setNumDisparities(128)
+stereoMatcher.setBlockSize(5)
 
-stereoMatcher.setSpeckleRange(32)
-stereoMatcher.setSpeckleWindowSize(50)
+stereoMatcher.setSpeckleRange(16)
+stereoMatcher.setSpeckleWindowSize(100)
 
 
 disp =  stereoMatcher.compute(dst22.astype('uint8'), dst11.astype('uint8')).astype(np.float32)
+disp=disp-disp.min()
+disp=disp/disp.max()
 
 fig=plt.figure(5)
 plt.imshow(disp);plt.colorbar();plt.clim(disp.min(),disp.max()/4)#;plt.show()
