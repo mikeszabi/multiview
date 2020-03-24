@@ -75,10 +75,10 @@ ratio=0.75
 
 #base_dir=r'd:\Data\EON1\photosFor3D\SceauxCastle'
 #base_dir=r'd:\DATA\EON1\caronboardcalibration\3d_results\Cibakhaza'
-base_dir=r'd:\DATA\MAV1\Images'
-run_id='art_20180823_121650_995'
-#run_id='images'
-run_id='Selection_20190124_120409_2800_3400'
+base_dir=r'd:\DATA'
+run_id='MetalCom'
+##run_id='images'
+#run_id='Selection_20190124_120409_2800_3400'
 ext='.jpg'
 
 im_dir=os.path.join(base_dir,run_id)
@@ -90,22 +90,22 @@ i1=2
 im_file1=jpg_list[i1]
 i2=3 
 im_file2=jpg_list[i2]
-im_file1=r'd:\\DATA\\MAV1\\Images\\Selection_20190124_120409_2800_3400\\roi_0_2882.jpg'
-im_file2=r'd:\\DATA\\MAV1\\Images\\Selection_20190124_120409_2800_3400\\roi_1_2882.jpg'
+#im_file1=r'd:\\DATA\\MAV1\\Images\\Selection_20190124_120409_2800_3400\\roi_0_2882.jpg'
+#im_file2=r'd:\\DATA\\MAV1\\Images\\Selection_20190124_120409_2800_3400\\roi_1_2882.jpg'
 
 img1 = cv2.imread(im_file1,0)  #queryimage # left image
 img2 = cv2.imread(im_file2,0) #trainimage # right image
 
 
 ##
-max_dim=2028
+max_dim=960
 img1, scale = imsz.imRescaleMaxDim(img1, max_dim, boUpscale = False, interpolation = 1)
 img2, scale = imsz.imRescaleMaxDim(img2, max_dim, boUpscale = False, interpolation = 1)
 
 ## SIFT
 # sift = cv2.xfeatures2d.SIFT_create(800)
 
-detector,matcher=init_feature(det_type,n_feature_point=2000)
+detector,matcher=init_feature(det_type,n_feature_point=1000)
 
 kp1, des1 = detector.detectAndCompute(img1,None)
 kp2, des2 = detector.detectAndCompute(img2,None)

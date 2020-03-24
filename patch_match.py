@@ -13,15 +13,16 @@ import cv2
 
 
 import homography_chain as hc
+
 importlib.reload(hc)
 
 import tsp_visualization as tspv
 importlib.reload(tspv)
 
 
-base_dir=r'd:\Data\EON1\photosFor3D\SceauxCastle'
+base_dir=r'd:\DATA'
 #run_id='20180907_103336_sel1'
-run_id='images'
+run_id='MetalCom'
 ext='.jpg'
 
 im_dir=os.path.join(base_dir,run_id)
