@@ -32,7 +32,7 @@ CAMERA_SENSOR_WIDTH_DIRECTORY = r'd:\Projects\3rdParty\openMVG\src\openMVG\exif\
 
 camera_file_params = os.path.join(CAMERA_SENSOR_WIDTH_DIRECTORY, "sensor_width_camera_database.txt")
 
-input_eval_dir=r'd:\DATA\EON1\photosFor3D\SceauxCastle'
+input_eval_dir=r'd:\DATA\EON_LOCAL\SEQUENCES\20200304_141400\276422\Master'
 images_dir=os.path.join(input_eval_dir, "images")
 output_eval_dir = os.path.join(input_eval_dir, "tutorial_out")
 

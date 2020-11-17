@@ -19,7 +19,7 @@ refPt_transformed = []
 cropping = False
 
 i1=0
-i2=1
+i2=3
 
 im1=jpg_list[i1]
 im2=jpg_list[i2]
@@ -29,21 +29,23 @@ M=hcobj.Ms[im1,im2]
 img1 = cv2.imread(im1,0)  #queryimage # left image
 img2 = cv2.imread(im2,0)  #queryimage # left image        
 
-max_dim=hcobj.image_width
-img1, scale = imRescaleMaxDim(img1, max_dim, boUpscale = False, interpolation = 1)
-img2, scale = imRescaleMaxDim(img2, max_dim, boUpscale = False, interpolation = 1)
+image_max_dim=hcobj.image_max_dim
+img1, scale = imRescaleMaxDim(img1, image_max_dim, boUpscale = False, interpolation = 1)
+img2, scale = imRescaleMaxDim(img2, image_max_dim, boUpscale = False, interpolation = 1)
 
-img2 = cv2.warpPerspective(img1, M, (img2.shape[1],img2.shape[0]))
+image_width=img1.shape[1]
 
-# M[0][2]*=scale
-# M[1][2]*=scale
-# M[2][0]*=scale
-# M[2][1]*=scale
+#img2 = cv2.warpPerspective(img1, M, (img2.shape[1],img2.shape[0]))
+
+M[0][2]*=scale
+M[1][2]*=scale
+M[2][0]*=scale
+M[2][1]*=scale
 
 
 def click_and_crop(event, x, y, flags, param):
 	# grab references to the global variables
-    global refPt, refPt_transformed, cropping, M, w
+    global refPt, refPt_transformed, cropping, M, image_width
  
 	# if the left mouse button was clicked, record the starting
 	# (x, y) coordinates and indicate that cropping is being
@@ -63,8 +65,8 @@ def click_and_crop(event, x, y, flags, param):
         cv2.rectangle(clone, refPt[0], refPt[1], (0, 255, 0), 2)
         
         refPt_transformed = cv2.perspectiveTransform(np.float32([refPt]), M)[0]
-        refPt_transformed[0][0]+=w
-        refPt_transformed[1][0]+=w
+        refPt_transformed[0][0]+=image_width
+        refPt_transformed[1][0]+=image_width
       
         cv2.rectangle(clone, tuple(refPt_transformed[0]), tuple(refPt_transformed[1]), (0, 255, 0), 2)
 

@@ -149,12 +149,13 @@ def CreateGraph():
 					G.add_edge(i, j, length = wtMatrix[i][j]) 
 	return G
 
-def DrawGraph(G,color):
-	pos = nx.spring_layout(G)
-	nx.draw(G, pos, with_labels = True, edge_color = color)  #with_labels=true is to show the node number in the output graph
-	edge_labels = nx.get_edge_attributes(G,'length')
-	nx.draw_networkx_edge_labels(G, pos, edge_labels = edge_labels,  font_size = 11) #prints weight on all the edges
-	return pos
+def DrawGraph(G,edge_max=200,edge_color='b'):
+    pos = nx.spring_layout(G)
+    edge_labels = nx.get_edge_attributes(G,'length')
+    edge_colors=edge_labels.values()
+    nx.draw(G, pos, with_labels = True, edge_cmap =plt.cm.Greens, edge_vmin=0, edge_vmax=edge_max, edge_color=edge_colors, width=5)  #with_labels=true is to show the node number in the output graph
+    nx.draw_networkx_edge_labels(G, pos, edge_labels = edge_labels,  font_size = 11) #prints weight on all the edges
+    return pos
 
 
 #main function
